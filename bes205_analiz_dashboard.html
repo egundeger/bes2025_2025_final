@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BES205 Beslenme Biyokimyası - Final Sınavı Analiz Raporu</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-color: var(--primary);
+        }
+
+        .stat-card .label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card .change {
+            font-size: 0.875rem;
+            margin-top: 8px;
+        }
+
+        .stat-card .change.positive { color: var(--success); }
+        .stat-card .change.negative { color: var(--danger); }
+
+        /* Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-dark);
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: var(--bg-card-hover);
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .progress-fill.excellent { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .progress-fill.good { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .progress-fill.average { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .progress-fill.poor { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .badge-info { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Topic Cards */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .topic-card:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .topic-name {
+            font-weight: 600;
+        }
+
+        .topic-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Quality Indicators */
+        .quality-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 8px;
+        }
+
+        .quality-item {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quality-item:hover {
+            transform: scale(1.1);
+            z-index: 1;
+        }
+
+        .quality-excellent { background: rgba(34, 197, 94, 0.3); color: #4ade80; }
+        .quality-good { background: rgba(59, 130, 246, 0.3); color: #60a5fa; }
+        .quality-average { background: rgba(245, 158, 11, 0.3); color: #fbbf24; }
+        .quality-poor { background: rgba(239, 68, 68, 0.3); color: #f87171; }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+            border: 1px solid var(--border);
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Correlation Matrix */
+        .correlation-grid {
+            display: grid;
+            gap: 2px;
+            font-size: 0.7rem;
+        }
+
+        .correlation-cell {
+            padding: 8px 4px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .correlation-header {
+            background: var(--bg-dark);
+            font-weight: 600;
+        }
+
+        /* Bloom Taxonomy */
+        .bloom-pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 20px;
+        }
+
+        .bloom-level {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .bloom-level:hover {
+            transform: scale(1.02);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.75rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+            .nav-tabs { justify-content: flex-start; overflow-x: auto; }
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: white; color: black; }
+            .nav-tabs, .footer { display: none; }
+            .section { display: block !important; page-break-inside: avoid; }
+            .card { border: 1px solid #ddd; }
+        }
+
+        /* Animations */
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📊 BES205 Beslenme Biyokimyası</h1>
+            <p>Final Sınavı Analiz Raporu | 2025-2026 Güz Dönemi</p>
+            <span class="badge">📅 Sınav Tarihi: 13 Ocak 2026</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <div class="nav-tab active" onclick="showSection('overview')">📈 Genel Bakış</div>
+            <div class="nav-tab" onclick="showSection('items')">🔍 Madde Analizi</div>
+            <div class="nav-tab" onclick="showSection('topics')">📚 Konu Analizi</div>
+            <div class="nav-tab" onclick="showSection('bloom')">🧠 Bloom Taksonomisi</div>
+            <div class="nav-tab" onclick="showSection('quality')">⭐ Soru Kalitesi</div>
+            <div class="nav-tab" onclick="showSection('recommendations')">💡 Öneriler</div>
+        </nav>
+
+        <!-- Overview Section -->
+        <section id="overview" class="section active">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">Öğrenci Sayısı</div>
+                    <div class="value">34</div>
+                    <div class="change positive">Tam katılım ✓</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Ortalama Puan</div>
+                    <div class="value">80.6</div>
+                    <div class="change positive">↑ İdeal aralıkta</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Medyan</div>
+                    <div class="value">85.0</div>
+                    <div class="change positive">Sağa çarpık dağılım</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Standart Sapma</div>
+                    <div class="value">12.8</div>
+                    <div class="change">Normal yayılım</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">En Düşük</div>
+                    <div class="value">45</div>
+                    <div class="change negative">1 başarısız</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">En Yüksek</div>
+                    <div class="value">100</div>
+                    <div class="change positive">Tam puan ✓</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">KR-20 Güvenilirlik</div>
+                    <div class="value">0.81</div>
+                    <div class="change positive">İyi güvenilirlik</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Başarı Oranı</div>
+                    <div class="value">97%</div>
+                    <div class="change positive">33/34 geçti</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span class="icon">📊</span>
+                            Puan Dağılımı
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="scoreDistributionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span class="icon">🎯</span>
+                            Başarı Kategorileri
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="successCategoriesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distribution Table -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📋</span>
+                        Şık Dağılımı Analizi
+                    </div>
+                    <span class="badge badge-warning">⚠️ Dengesizlik Tespit Edildi</span>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Şık</th>
+                                <th>Mevcut</th>
+                                <th>Beklenen</th>
+                                <th>Sapma</th>
+                                <th>Durum</th>
+                                <th>İlgili Sorular</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>A</strong></td>
+                                <td>5</td>
+                                <td>8</td>
+                                <td style="color: #f87171;">-3</td>
+                                <td><span class="badge badge-danger">Düşük</span></td>
+                                <td>6, 8, 16, 22, 27</td>
+                            </tr>
+                            <tr>
+                                <td><strong>B</strong></td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td style="color: #f87171;">+3</td>
+                                <td><span class="badge badge-danger">Yüksek</span></td>
+                                <td>1, 4, 10, 11, 18, 19, 25, 34, 37, 38, 40</td>
+                            </tr>
+                            <tr>
+                                <td><strong>C</strong></td>
+                                <td>7</td>
+                                <td>8</td>
+                                <td style="color: #4ade80;">-1</td>
+                                <td><span class="badge badge-success">Normal</span></td>
+                                <td>3, 9, 13, 24, 26, 29, 39</td>
+                            </tr>
+                            <tr>
+                                <td><strong>D</strong></td>
+                                <td>7</td>
+                                <td>8</td>
+                                <td style="color: #4ade80;">-1</td>
+                                <td><span class="badge badge-success">Normal</span></td>
+                                <td>14, 15, 17, 20, 28, 35, 36</td>
+                            </tr>
+                            <tr>
+                                <td><strong>E</strong></td>
+                                <td>10</td>
+                                <td>8</td>
+                                <td style="color: #fbbf24;">+2</td>
+                                <td><span class="badge badge-warning">Hafif Yüksek</span></td>
+                                <td>2, 5, 7, 12, 21, 23, 30, 31, 32, 33</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Item Analysis Section -->
+        <section id="items" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🔬</span>
+                        Madde Analizi Tablosu
+                    </div>
+                    <div>
+                        <span class="badge badge-success">13 Çok İyi</span>
+                        <span class="badge badge-info">9 İyi</span>
+                        <span class="badge badge-warning">7 Kabul Edilebilir</span>
+                        <span class="badge badge-danger">11 Zayıf</span>
+                    </div>
+                </div>
+                <div class="table-container" style="max-height: 600px; overflow-y: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Soru</th>
+                                <th>Doğru</th>
+                                <th>Güçlük (p)</th>
+                                <th>Güçlük Grafiği</th>
+                                <th>Üst %27</th>
+                                <th>Alt %27</th>
+                                <th>Ayırt Edicilik (D)</th>
+                                <th>Değerlendirme</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemAnalysisTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span class="icon">📉</span>
+                            Güçlük İndeksi Dağılımı
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="difficultyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span class="icon">📈</span>
+                            Ayırt Edicilik Dağılımı
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="discriminationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Topics Section -->
+        <section id="topics" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📚</span>
+                        Konu Bazlı Başarı Analizi
+                    </div>
+                </div>
+                <div class="chart-container" style="height: 400px;">
+                    <canvas id="topicsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <span class="topic-name">🧪 Klinik Vakalar (DKA/Metformin)</span>
+                        <span class="topic-score" style="color: #4ade80;">99.3%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill excellent" style="width: 99.3%;"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: var(--text-secondary); font-size: 0.875rem;">
+                        Sorular: 37, 38, 39, 40 | ⚠️ Çok kolay - zorlaştırılmalı
+                    </p>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <span class="topic-name">🔬 Pentoz Fosfat Yolu</span>
+                        <span class="topic-score" style="color: #4ade80;">90.6%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill excellent" style="width: 90.6%;"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: var(--text-secondary); font-size: 0.875rem;">
+                        Sorular: 6, 10, 25, 27, 29 | ✓ İyi anlaşılmış
+                    </p>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <span class="topic-name">🥩 Protein/AA Metabolizması</span>
+                        <span class="topic-score" style="color: #4ade80;">83.3%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill good" style="width: 83.3%;"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: var(--text-secondary); font-size: 0.875rem;">
+                        Sorular: 19, 20, 21 | ✓ İyi düzeyde
+                    </p>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <span class="topic-name">🧈 Lipid Metabolizması</span>
+                        <span class="topic-score" style="color: #60a5fa;">80.4%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill good" style="width: 80.4%;"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: var(--text-secondary); font-size: 0.875rem;">
+                        Sorular: 13, 14, 15, 16, 17, 18 | ✓ Dengeli zorluk
+                    </p>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <span class="topic-name">🔄 Sitrat Çevrimi (TCA)</span>
+                        <span class="topic-score" style="color: #fbbf24;">77.9%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill average" style="width: 77.9%;"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: var(--text-secondary); font-size: 0.875rem;">
+                        Sorular: 31, 32, 33, 34 | ⚡ Orta düzey
+                    </p>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <span class="topic-name">🍬 Glikoliz/Glukoneogenez</span>
+                        <span class="topic-score" style="color: #fbbf24;">76.5%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill average" style="width: 76.5%;"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: var(--text-secondary); font-size: 0.875rem;">
+                        Sorular: 1, 2, 3, 4, 5, 11, 23, 26, 30 | ⚡ Orta düzey
+                    </p>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <span class="topic-name">⚡ ETC/Oksidatif Fosforilasyon</span>
+                        <span class="topic-score" style="color: #fbbf24;">75.0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill average" style="width: 75%;"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: var(--text-secondary); font-size: 0.875rem;">
+                        Sorular: 35, 36 | ⚠️ Soru 35 zorluk yaratmış
+                    </p>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <span class="topic-name">🔗 Metabolik Entegrasyon</span>
+                        <span class="topic-score" style="color: #f87171;">70.2%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill poor" style="width: 70.2%;"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: var(--text-secondary); font-size: 0.875rem;">
+                        Sorular: 7, 8, 9, 12, 22, 24, 28 | ❌ Dikkat gerekli
+                    </p>
+                </div>
+            </div>
+
+            <!-- Correlation Matrix -->
+            <div class="card" style="margin-top: 25px;">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🔗</span>
+                        Konular Arası Korelasyon Matrisi
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table style="font-size: 0.8rem;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Glikoliz</th>
+                                <th>Pentoz</th>
+                                <th>TCA</th>
+                                <th>ETC</th>
+                                <th>Lipid</th>
+                                <th>Protein</th>
+                                <th>Entegr.</th>
+                                <th>Klinik</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Glikoliz</strong></td><td style="background: #22c55e40;">1.00</td><td style="background: #22c55e30;">0.69</td><td>0.20</td><td>0.19</td><td style="background: #3b82f620;">0.53</td><td>0.29</td><td style="background: #3b82f620;">0.58</td><td style="background: #3b82f610;">0.43</td></tr>
+                            <tr><td><strong>Pentoz</strong></td><td style="background: #22c55e30;">0.69</td><td style="background: #22c55e40;">1.00</td><td>-0.06</td><td>0.28</td><td style="background: #3b82f610;">0.40</td><td>0.22</td><td style="background: #3b82f610;">0.39</td><td style="background: #3b82f620;">0.59</td></tr>
+                            <tr><td><strong>TCA</strong></td><td>0.20</td><td>-0.06</td><td style="background: #22c55e40;">1.00</td><td>-0.06</td><td>0.31</td><td style="background: #3b82f620;">0.50</td><td>0.35</td><td>-0.16</td></tr>
+                            <tr><td><strong>ETC</strong></td><td>0.19</td><td>0.28</td><td>-0.06</td><td style="background: #22c55e40;">1.00</td><td>0.05</td><td>0.19</td><td>-0.16</td><td>0.17</td></tr>
+                            <tr><td><strong>Lipid</strong></td><td style="background: #3b82f620;">0.53</td><td style="background: #3b82f610;">0.40</td><td>0.31</td><td>0.05</td><td style="background: #22c55e40;">1.00</td><td>0.19</td><td style="background: #3b82f620;">0.53</td><td>0.26</td></tr>
+                            <tr><td><strong>Protein</strong></td><td>0.29</td><td>0.22</td><td style="background: #3b82f620;">0.50</td><td>0.19</td><td>0.19</td><td style="background: #22c55e40;">1.00</td><td style="background: #3b82f610;">0.40</td><td>0.34</td></tr>
+                            <tr><td><strong>Entegrasyon</strong></td><td style="background: #3b82f620;">0.58</td><td style="background: #3b82f610;">0.39</td><td>0.35</td><td>-0.16</td><td style="background: #3b82f620;">0.53</td><td style="background: #3b82f610;">0.40</td><td style="background: #22c55e40;">1.00</td><td style="background: #3b82f610;">0.39</td></tr>
+                            <tr><td><strong>Klinik</strong></td><td style="background: #3b82f610;">0.43</td><td style="background: #3b82f620;">0.59</td><td>-0.16</td><td>0.17</td><td>0.26</td><td>0.34</td><td style="background: #3b82f610;">0.39</td><td style="background: #22c55e40;">1.00</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="margin-top: 15px; color: var(--text-secondary); font-size: 0.85rem;">
+                    💡 <strong>Yorum:</strong> Glikoliz-Pentoz (r=0.69) ve Pentoz-Klinik (r=0.59) arasında güçlü pozitif korelasyon var. 
+                    TCA-ETC arasında beklenmedik negatif korelasyon (-0.06) dikkat çekici.
+                </p>
+            </div>
+        </section>
+
+        <!-- Bloom Taxonomy Section -->
+        <section id="bloom" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🧠</span>
+                        Bloom Taksonomisi Analizi
+                    </div>
+                </div>
+                <div class="chart-container" style="height: 350px;">
+                    <canvas id="bloomChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📊</span>
+                        Bilişsel Düzey Detayları
+                    </div>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="bloom-level" style="background: linear-gradient(90deg, rgba(239,68,68,0.2) 0%, rgba(239,68,68,0.1) 100%); width: 40%;">
+                        <div>
+                            <strong>🔺 Yaratma</strong>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">1 soru (S8) | Yeni ürün oluşturma</p>
+                        </div>
+                        <span style="font-size: 1.5rem; color: #f87171;">23.5%</span>
+                    </div>
+                    
+                    <div class="bloom-level" style="background: linear-gradient(90deg, rgba(249,115,22,0.2) 0%, rgba(249,115,22,0.1) 100%); width: 55%;">
+                        <div>
+                            <strong>⚖️ Değerlendirme</strong>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">6 soru (S7, 21, 23, 30, 39, 40) | Yargılama, karar verme</p>
+                        </div>
+                        <span style="font-size: 1.5rem; color: #fb923c;">83.3%</span>
+                    </div>
+                    
+                    <div class="bloom-level" style="background: linear-gradient(90deg, rgba(234,179,8,0.2) 0%, rgba(234,179,8,0.1) 100%); width: 70%;">
+                        <div>
+                            <strong>🔍 Analiz</strong>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">6 soru (S10, 25, 33, 34, 37, 38) | Parçalara ayırma</p>
+                        </div>
+                        <span style="font-size: 1.5rem; color: #facc15;">91.2%</span>
+                    </div>
+                    
+                    <div class="bloom-level" style="background: linear-gradient(90deg, rgba(34,197,94,0.2) 0%, rgba(34,197,94,0.1) 100%); width: 85%;">
+                        <div>
+                            <strong>🛠️ Uygulama</strong>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">13 soru | Bilgiyi kullanma</p>
+                        </div>
+                        <span style="font-size: 1.5rem; color: #4ade80;">78.1%</span>
+                    </div>
+                    
+                    <div class="bloom-level" style="background: linear-gradient(90deg, rgba(59,130,246,0.2) 0%, rgba(59,130,246,0.1) 100%); width: 92%;">
+                        <div>
+                            <strong>💡 Anlama</strong>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">8 soru | Kavramı açıklama</p>
+                        </div>
+                        <span style="font-size: 1.5rem; color: #60a5fa;">82.4%</span>
+                    </div>
+                    
+                    <div class="bloom-level" style="background: linear-gradient(90deg, rgba(139,92,246,0.2) 0%, rgba(139,92,246,0.1) 100%); width: 100%;">
+                        <div>
+                            <strong>📝 Hatırlama</strong>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">5 soru (S6, 11, 14, 19, 27) | Temel bilgi</p>
+                        </div>
+                        <span style="font-size: 1.5rem; color: #a78bfa;">81.2%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quality Section -->
+        <section id="quality" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">⭐</span>
+                        Soru Kalite Haritası
+                    </div>
+                    <div style="display: flex; gap: 10px; font-size: 0.8rem;">
+                        <span>🟢 70+ Mükemmel</span>
+                        <span>🔵 50-69 İyi</span>
+                        <span>🟡 30-49 Orta</span>
+                        <span>🔴 0-29 Zayıf</span>
+                    </div>
+                </div>
+                <div class="quality-grid" id="qualityGrid">
+                </div>
+                <p style="margin-top: 20px; color: var(--text-secondary); font-size: 0.9rem;">
+                    💡 <strong>Kalite Skoru =</strong> Güçlük optimizasyonu (%40) + Ayırt edicilik (%60)<br>
+                    İdeal güçlük: p = 0.50 | İdeal ayırt edicilik: D ≥ 0.40
+                </p>
+            </div>
+
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span class="icon">📊</span>
+                            Güçlük vs Ayırt Edicilik
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="scatterChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span class="icon">🎯</span>
+                            Kalite Dağılımı
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="qualityDistChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recommendations Section -->
+        <section id="recommendations" class="section">
+            <div class="card" style="border-left: 4px solid #22c55e;">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon" style="background: linear-gradient(135deg, #22c55e 0%, #4ade80 100%);">✅</span>
+                        Sınavın Güçlü Yönleri
+                    </div>
+                </div>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+                    <li>✓ <strong>KR-20 = 0.81:</strong> İyi düzeyde güvenilirlik sağlanmış</li>
+                    <li>✓ <strong>Ortalama = 80.6:</strong> İdeal aralıkta (70-80 önerilir)</li>
+                    <li>✓ <strong>%97 Başarı:</strong> Sadece 1 öğrenci başarısız</li>
+                    <li>✓ <strong>Klinik Vakalar:</strong> Öğrenciler gerçek dünya uygulamalarını kavramış</li>
+                    <li>✓ <strong>Pentoz Fosfat Yolu:</strong> Bu konu çok iyi anlaşılmış</li>
+                    <li>✓ <strong>13 soru</strong> çok iyi ayırt edicilik göstermiş (D ≥ 0.40)</li>
+                </ul>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #f59e0b;">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon" style="background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);">⚠️</span>
+                        Dikkat Edilmesi Gereken Alanlar
+                    </div>
+                </div>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+                    <li>⚠️ <strong>Soru 8 (p=0.24):</strong> Çok zor, ayırt ediciliği düşük - revize edilmeli</li>
+                    <li>⚠️ <strong>Soru 38, 39, 40 (p=1.00):</strong> Herkes doğru yapmış - zorlaştırılmalı</li>
+                    <li>⚠️ <strong>Şık Dağılımı:</strong> B şıkkı fazla (11), A şıkkı az (5)</li>
+                    <li>⚠️ <strong>Metabolik Entegrasyon:</strong> En düşük başarı oranı (%70.2)</li>
+                    <li>⚠️ <strong>11 soru</strong> zayıf ayırt edicilik göstermiş (D < 0.20)</li>
+                </ul>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #3b82f6;">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">💡</span>
+                        Gelecek Sınavlar İçin Öneriler
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div style="background: var(--bg-dark); padding: 20px; border-radius: 12px;">
+                        <h4 style="margin-bottom: 10px; color: #60a5fa;">📝 Soru Hazırlama</h4>
+                        <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 20px;">
+                            <li>Şık dağılımını dengeleyin (her şık ~8 soru)</li>
+                            <li>Metabolik entegrasyon konusuna daha fazla vaka ekleyin</li>
+                            <li>"Yaratma" düzeyinde daha fazla soru hazırlayın</li>
+                            <li>Klinik vakaları zorlaştırın (alt grupların da yapabildiği)</li>
+                        </ul>
+                    </div>
+                    <div style="background: var(--bg-dark); padding: 20px; border-radius: 12px;">
+                        <h4 style="margin-bottom: 10px; color: #60a5fa;">🎯 Zorluk Dengesi</h4>
+                        <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 20px;">
+                            <li>İdeal güçlük: %50-70 arası (şu an %81)</li>
+                            <li>Kolay soruları azaltın (%43 çok kolay)</li>
+                            <li>Orta zorlukta soru sayısını artırın</li>
+                            <li>Her konudan en az 1 zor soru ekleyin</li>
+                        </ul>
+                    </div>
+                    <div style="background: var(--bg-dark); padding: 20px; border-radius: 12px;">
+                        <h4 style="margin-bottom: 10px; color: #60a5fa;">📚 Konu Dağılımı</h4>
+                        <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 20px;">
+                            <li>ETC konusundan daha fazla soru (şu an sadece 2)</li>
+                            <li>Protein metabolizması soruları artırılabilir</li>
+                            <li>Konular arası entegrasyon soruları ekleyin</li>
+                            <li>Hesaplama içeren sorular ekleyin</li>
+                        </ul>
+                    </div>
+                    <div style="background: var(--bg-dark); padding: 20px; border-radius: 12px;">
+                        <h4 style="margin-bottom: 10px; color: #60a5fa;">🔬 Madde Kalitesi</h4>
+                        <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 20px;">
+                            <li>Çeldiricilerin etkinliğini kontrol edin</li>
+                            <li>Her şık en az %5 seçilmeli</li>
+                            <li>Negatif kök (hangisi değildir) azaltın</li>
+                            <li>Şık uzunluklarını dengeleyin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #a78bfa;">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);">📈</span>
+                        Öğrencilere Özel Tavsiyeler
+                    </div>
+                </div>
+                <div style="background: var(--bg-dark); padding: 25px; border-radius: 12px; margin-top: 15px;">
+                    <h4 style="margin-bottom: 15px;">🎯 Çalışmanız Gereken Konular (Başarı Sırasına Göre)</h4>
+                    <ol style="padding-left: 25px; color: var(--text-secondary);">
+                        <li style="margin-bottom: 8px;"><strong style="color: #f87171;">Metabolik Entegrasyon (70.2%)</strong> - Hormonların metabolizma üzerindeki etkilerini, tokluk/açlık durumlarını tekrar edin</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #fbbf24;">ETC ve Oksidatif Fosforilasyon (75%)</strong> - Kompleksleri, inhibitörleri ve proton gradyanını çalışın</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #fbbf24;">Glikoliz/Glukoneogenez (76.5%)</strong> - Regülasyon mekanizmalarını, anahtar enzimleri tekrar edin</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #fbbf24;">Sitrat Çevrimi (77.9%)</strong> - Anaplerotik reaksiyonları, regülasyonu çalışın</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>📊 BES205 Beslenme Biyokimyası | İstanbul Sağlık ve Teknoloji Üniversitesi</p>
+            <p style="margin-top: 10px; font-size: 0.85rem;">
+                Bu rapor otomatik olarak oluşturulmuştur | Güncelleme: Ocak 2026
+            </p>
+            <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
+                💻 Powered by Claude AI | Designed for GitHub Pages
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Chart.js Global Config
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.borderColor = '#334155';
+
+        // Item Analysis Data
+        const itemData = [
+            {q: 1, ans: 'B', p: 0.971, upper: 1.000, lower: 0.889, d: 0.111, status: 'Zayıf'},
+            {q: 2, ans: 'E', p: 0.794, upper: 0.889, lower: 0.556, d: 0.333, status: 'İyi'},
+            {q: 3, ans: 'C', p: 0.735, upper: 1.000, lower: 0.556, d: 0.444, status: 'Çok İyi'},
+            {q: 4, ans: 'B', p: 0.618, upper: 0.889, lower: 0.556, d: 0.333, status: 'İyi'},
+            {q: 5, ans: 'E', p: 0.882, upper: 1.000, lower: 0.556, d: 0.444, status: 'Çok İyi'},
+            {q: 6, ans: 'A', p: 0.824, upper: 1.000, lower: 0.444, d: 0.556, status: 'Çok İyi'},
+            {q: 7, ans: 'E', p: 0.882, upper: 1.000, lower: 0.667, d: 0.333, status: 'İyi'},
+            {q: 8, ans: 'A', p: 0.235, upper: 0.222, lower: 0.111, d: 0.111, status: 'Zayıf'},
+            {q: 9, ans: 'C', p: 0.706, upper: 0.778, lower: 0.556, d: 0.222, status: 'Kabul'},
+            {q: 10, ans: 'B', p: 0.912, upper: 1.000, lower: 0.667, d: 0.333, status: 'İyi'},
+            {q: 11, ans: 'B', p: 0.735, upper: 1.000, lower: 0.556, d: 0.444, status: 'Çok İyi'},
+            {q: 12, ans: 'E', p: 0.529, upper: 0.889, lower: 0.333, d: 0.556, status: 'Çok İyi'},
+            {q: 13, ans: 'C', p: 0.794, upper: 1.000, lower: 0.444, d: 0.556, status: 'Çok İyi'},
+            {q: 14, ans: 'D', p: 0.676, upper: 1.000, lower: 0.444, d: 0.556, status: 'Çok İyi'},
+            {q: 15, ans: 'D', p: 0.882, upper: 1.000, lower: 0.667, d: 0.333, status: 'İyi'},
+            {q: 16, ans: 'A', p: 0.912, upper: 1.000, lower: 0.778, d: 0.222, status: 'Kabul'},
+            {q: 17, ans: 'D', p: 0.824, upper: 0.889, lower: 0.778, d: 0.111, status: 'Zayıf'},
+            {q: 18, ans: 'B', p: 0.735, upper: 0.889, lower: 0.333, d: 0.556, status: 'Çok İyi'},
+            {q: 19, ans: 'B', p: 0.941, upper: 1.000, lower: 0.889, d: 0.111, status: 'Zayıf'},
+            {q: 20, ans: 'D', p: 0.824, upper: 1.000, lower: 0.667, d: 0.333, status: 'İyi'},
+            {q: 21, ans: 'E', p: 0.735, upper: 0.889, lower: 0.556, d: 0.333, status: 'İyi'},
+            {q: 22, ans: 'A', p: 0.765, upper: 1.000, lower: 0.444, d: 0.556, status: 'Çok İyi'},
+            {q: 23, ans: 'E', p: 0.765, upper: 1.000, lower: 0.556, d: 0.444, status: 'Çok İyi'},
+            {q: 24, ans: 'C', p: 0.941, upper: 1.000, lower: 0.778, d: 0.222, status: 'Kabul'},
+            {q: 25, ans: 'B', p: 0.941, upper: 1.000, lower: 0.889, d: 0.111, status: 'Zayıf'},
+            {q: 26, ans: 'C', p: 0.765, upper: 1.000, lower: 0.333, d: 0.667, status: 'Çok İyi'},
+            {q: 27, ans: 'A', p: 0.882, upper: 1.000, lower: 0.556, d: 0.444, status: 'Çok İyi'},
+            {q: 28, ans: 'D', p: 0.853, upper: 1.000, lower: 0.667, d: 0.333, status: 'İyi'},
+            {q: 29, ans: 'C', p: 0.971, upper: 1.000, lower: 0.889, d: 0.111, status: 'Zayıf'},
+            {q: 30, ans: 'E', p: 0.618, upper: 0.556, lower: 0.333, d: 0.222, status: 'Kabul'},
+            {q: 31, ans: 'E', p: 0.735, upper: 0.889, lower: 0.556, d: 0.333, status: 'İyi'},
+            {q: 32, ans: 'E', p: 0.735, upper: 0.889, lower: 0.667, d: 0.222, status: 'Kabul'},
+            {q: 33, ans: 'E', p: 0.824, upper: 1.000, lower: 0.556, d: 0.444, status: 'Çok İyi'},
+            {q: 34, ans: 'B', p: 0.824, upper: 0.889, lower: 0.667, d: 0.222, status: 'Kabul'},
+            {q: 35, ans: 'D', p: 0.588, upper: 0.667, lower: 0.444, d: 0.222, status: 'Kabul'},
+            {q: 36, ans: 'D', p: 0.912, upper: 1.000, lower: 0.889, d: 0.111, status: 'Zayıf'},
+            {q: 37, ans: 'B', p: 0.971, upper: 1.000, lower: 0.889, d: 0.111, status: 'Zayıf'},
+            {q: 38, ans: 'B', p: 1.000, upper: 1.000, lower: 1.000, d: 0.000, status: 'Çok Zayıf'},
+            {q: 39, ans: 'C', p: 1.000, upper: 1.000, lower: 1.000, d: 0.000, status: 'Çok Zayıf'},
+            {q: 40, ans: 'B', p: 1.000, upper: 1.000, lower: 1.000, d: 0.000, status: 'Çok Zayıf'}
+        ];
+
+        // Populate Item Analysis Table
+        const tableBody = document.getElementById('itemAnalysisTable');
+        itemData.forEach(item => {
+            const statusClass = item.status === 'Çok İyi' ? 'badge-success' : 
+                               item.status === 'İyi' ? 'badge-info' :
+                               item.status === 'Kabul' ? 'badge-warning' : 'badge-danger';
+            
+            const progressClass = item.p >= 0.85 ? 'excellent' : 
+                                 item.p >= 0.70 ? 'good' :
+                                 item.p >= 0.50 ? 'average' : 'poor';
+            
+            tableBody.innerHTML += `
+                <tr>
+                    <td><strong>S${item.q}</strong></td>
+                    <td>${item.ans}</td>
+                    <td>${(item.p * 100).toFixed(1)}%</td>
+                    <td style="width: 150px;">
+                        <div class="progress-bar">
+                            <div class="progress-fill ${progressClass}" style="width: ${item.p * 100}%;"></div>
+                        </div>
+                    </td>
+                    <td>${(item.upper * 100).toFixed(0)}%</td>
+                    <td>${(item.lower * 100).toFixed(0)}%</td>
+                    <td>${item.d.toFixed(2)}</td>
+                    <td><span class="badge ${statusClass}">${item.status}</span></td>
+                </tr>
+            `;
+        });
+
+        // Quality Grid
+        const qualityGrid = document.getElementById('qualityGrid');
+        const qualityScores = [35,68,84,75,78,87,65,43,58,64,84,99,88,93,65,50,40,91,36,67,71,89,83,49,36,89,78,66,35,62,71,57,80,54,63,37,35,20,20,20];
+        qualityScores.forEach((score, i) => {
+            const qClass = score >= 70 ? 'quality-excellent' : 
+                          score >= 50 ? 'quality-good' :
+                          score >= 30 ? 'quality-average' : 'quality-poor';
+            qualityGrid.innerHTML += `
+                <div class="quality-item ${qClass} tooltip" data-tooltip="S${i+1}: Kalite=${score}">
+                    ${i+1}
+                </div>
+            `;
+        });
+
+        // Score Distribution Chart
+        new Chart(document.getElementById('scoreDistributionChart'), {
+            type: 'bar',
+            data: {
+                labels: ['0-50', '50-60', '60-70', '70-80', '80-90', '90-100'],
+                datasets: [{
+                    label: 'Öğrenci Sayısı',
+                    data: [1, 0, 5, 5, 12, 11],
+                    backgroundColor: [
+                        'rgba(239, 68, 68, 0.7)',
+                        'rgba(249, 115, 22, 0.7)',
+                        'rgba(245, 158, 11, 0.7)',
+                        'rgba(34, 197, 94, 0.7)',
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(139, 92, 246, 0.7)'
+                    ],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#334155' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Success Categories Chart
+        new Chart(document.getElementById('successCategoriesChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Çok İyi (≥85)', 'İyi (70-84)', 'Orta (50-69)', 'Başarısız (<50)'],
+                datasets: [{
+                    data: [18, 10, 5, 1],
+                    backgroundColor: [
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(239, 68, 68, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // Topics Chart
+        new Chart(document.getElementById('topicsChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Klinik Vakalar', 'Pentoz Fosfat', 'Protein/AA', 'Lipid', 'TCA', 'Glikoliz', 'ETC', 'Met. Entegrasyon'],
+                datasets: [{
+                    label: 'Başarı Oranı (%)',
+                    data: [99.3, 90.6, 83.3, 80.4, 77.9, 76.5, 75.0, 70.2],
+                    backgroundColor: [
+                        'rgba(34, 197, 94, 0.7)',
+                        'rgba(34, 197, 94, 0.6)',
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(59, 130, 246, 0.6)',
+                        'rgba(245, 158, 11, 0.7)',
+                        'rgba(245, 158, 11, 0.6)',
+                        'rgba(245, 158, 11, 0.5)',
+                        'rgba(239, 68, 68, 0.7)'
+                    ],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, max: 100, grid: { color: '#334155' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Bloom Chart
+        new Chart(document.getElementById('bloomChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Hatırlama', 'Anlama', 'Uygulama', 'Analiz', 'Değerlendirme', 'Yaratma'],
+                datasets: [{
+                    label: 'Başarı Oranı (%)',
+                    data: [81.2, 82.4, 78.1, 91.2, 83.3, 23.5],
+                    backgroundColor: 'rgba(99, 102, 241, 0.3)',
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: '#334155' },
+                        angleLines: { color: '#334155' }
+                    }
+                }
+            }
+        });
+
+        // Difficulty Chart
+        new Chart(document.getElementById('difficultyChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Çok Kolay (>85%)', 'Kolay (70-85%)', 'Orta (50-70%)', 'Zor (<50%)'],
+                datasets: [{
+                    data: [17, 17, 5, 1],
+                    backgroundColor: [
+                        'rgba(34, 197, 94, 0.7)',
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(245, 158, 11, 0.7)',
+                        'rgba(239, 68, 68, 0.7)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        // Discrimination Chart
+        new Chart(document.getElementById('discriminationChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Çok İyi (≥0.40)', 'İyi (0.30-0.39)', 'Kabul (0.20-0.29)', 'Zayıf (<0.20)'],
+                datasets: [{
+                    data: [13, 9, 7, 11],
+                    backgroundColor: [
+                        'rgba(34, 197, 94, 0.7)',
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(245, 158, 11, 0.7)',
+                        'rgba(239, 68, 68, 0.7)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        // Scatter Chart (Difficulty vs Discrimination)
+        const scatterData = itemData.map(item => ({x: item.p, y: item.d}));
+        new Chart(document.getElementById('scatterChart'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Sorular',
+                    data: scatterData,
+                    backgroundColor: scatterData.map(d => 
+                        d.y >= 0.4 ? 'rgba(34, 197, 94, 0.7)' :
+                        d.y >= 0.3 ? 'rgba(59, 130, 246, 0.7)' :
+                        d.y >= 0.2 ? 'rgba(245, 158, 11, 0.7)' : 'rgba(239, 68, 68, 0.7)'
+                    ),
+                    pointRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { 
+                        title: { display: true, text: 'Güçlük (p)' },
+                        min: 0, max: 1,
+                        grid: { color: '#334155' }
+                    },
+                    y: { 
+                        title: { display: true, text: 'Ayırt Edicilik (D)' },
+                        min: -0.1, max: 0.8,
+                        grid: { color: '#334155' }
+                    }
+                }
+            }
+        });
+
+        // Quality Distribution Chart
+        new Chart(document.getElementById('qualityDistChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Mükemmel (70+)', 'İyi (50-69)', 'Orta (30-49)', 'Zayıf (0-29)'],
+                datasets: [{
+                    label: 'Soru Sayısı',
+                    data: [
+                        qualityScores.filter(s => s >= 70).length,
+                        qualityScores.filter(s => s >= 50 && s < 70).length,
+                        qualityScores.filter(s => s >= 30 && s < 50).length,
+                        qualityScores.filter(s => s < 30).length
+                    ],
+                    backgroundColor: [
+                        'rgba(34, 197, 94, 0.7)',
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(245, 158, 11, 0.7)',
+                        'rgba(239, 68, 68, 0.7)'
+                    ],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#334155' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
